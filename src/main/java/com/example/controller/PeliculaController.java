@@ -3,11 +3,16 @@ package com.example.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.domain.Pelicula;
@@ -32,10 +37,64 @@ public class PeliculaController {
 	//Devuelve pelicula por ID
 	@GetMapping("/id/{id}")
 	public Pelicula show(@PathVariable("id") int id) { 
+		/*
+		Pelicula peli = peliculaRepository.findById(id).orElse(null);
+		return peli
+		*/
+		
 		return peliculaRepository.findById(id).orElse(null);
 	}
+	
+	@GetMapping("/buscar/genero_reparto_fecha_titulo")
+	public List<Pelicula> buscarPorGeneroRepartoFechaEstrenoYNombre(
+	        @RequestParam(value = "genero", required = false) String genero,
+	        @RequestParam(value = "reparto", required = false) String reparto,
+	        @RequestParam(value = "fechaEstreno", required = false) Integer fechaEstreno,
+	        @RequestParam(value = "titulo", required = false) String titulo) {
+	    // Llama al repositorio con todos los parámetros
+	    return peliculaRepository.findByGeneroRepartoFechaEstrenoYTitulo(genero, reparto, fechaEstreno, titulo);
+	}
+	
+	//Crear pelicula
+	@PostMapping({"crea"})
+	@ResponseStatus (HttpStatus.CREATED)
+	public Pelicula creaPelicula(@RequestBody Pelicula peli) {  
+		return peliculaRepository.save(peli);
+	}
 
+	
+	/***
+	 * Borramos una pelicula
+	 * Le pasamos por parametro el ID
+	 * **/
+	@DeleteMapping("borra/{id}")
+	@ResponseStatus (HttpStatus.NO_CONTENT)
+	public void borraPelicula(@PathVariable("id") int id) {
+		peliculaRepository.deleteById(id);
+	}
+	
+	/**
+	 * Actualizamos una pelicula dependiendo de su id
+	 * **/
+	@PutMapping("actualiza/{id}")
+	@ResponseStatus (HttpStatus.CREATED)
+	public Pelicula actualizaPelicula(@RequestBody Pelicula pelicula, @PathVariable("id") int id) {
+		Pelicula actuPeli = peliculaRepository.findById(id).orElse(null);
+		
+		actuPeli.setTitulo(pelicula.getTitulo());
+		actuPeli.setImagen(pelicula.getImagen());
+		actuPeli.setFechaEstreno(pelicula.getFechaEstreno());
+		actuPeli.setGenero(pelicula.getGenero());
+		actuPeli.setReparto(pelicula.getReparto());
+		actuPeli.setResumen(pelicula.getResumen());
+		actuPeli.setValoracion(pelicula.getValoracion());
+		actuPeli.setAltoImagen(pelicula.getAltoImagen());
+		actuPeli.setAnchoImagen(pelicula.getAnchoImagen());
 
+		
+		return peliculaRepository.save(actuPeli);
+	}
+/*
 	//Busca pelicula por titulo
 	@GetMapping("/titulo/{titulo}")
     public List<Pelicula> showTitulo(@PathVariable("titulo") String titulo) {
@@ -52,7 +111,7 @@ public class PeliculaController {
 	    return peliculaRepository.findByGeneroAndFechaEstreno(genero, fechaEstreno);
 	}
 	  
-	/*
+	
 	  //Busca Lista de peliculas por genero y año
 	@GetMapping("/buscar/reparto_fecha")
 	public List<Pelicula> buscarPorRepartoYAnio(
@@ -62,5 +121,25 @@ public class PeliculaController {
 	    return peliculaRepository.findByFechaEstrenoAndReparto(reparto, fechaEstreno);
 	}
 	*/
+	// Busca una película por género, reparto y año
+	/*@GetMapping("/buscar/genero_reparto_fecha")
+	public List<Pelicula> buscarPorGeneroRepartoYAnio(
+	        @RequestParam("genero") String genero,
+	        @RequestParam("reparto") String reparto,
+	        @RequestParam("fechaEstreno") int fechaEstreno) {
+	    return peliculaRepository.findByFechaEstrenoGeneroAndReparto(genero, reparto, fechaEstreno);
+	}*/
+	/*
+	@GetMapping("/buscar/genero_reparto_fecha")
+	public List<Pelicula> buscarPorGeneroRepartoYAnio(
+	        @RequestParam(value = "genero", required = false) String genero,
+	        @RequestParam(value = "reparto", required = false) String reparto,
+	        @RequestParam(value = "fechaEstreno", required = false) Integer fechaEstreno) {
+	    return peliculaRepository.findByGeneroRepartoAndFechaEstreno(genero, reparto, fechaEstreno);
+	}*/
+
+
+	
+
 
 }
