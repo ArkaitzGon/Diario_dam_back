@@ -15,31 +15,32 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.domain.Lista;
-import com.example.repository.ListaRepository;
+import com.example.domain.Usuario;
+import com.example.repository.UsuarioRepository;
 
 @RestController
-@RequestMapping("/api/lista")
-public class ListaController {
+@RequestMapping("/api/usuario")
+public class UsuarioController {
 
 	@Autowired
-	ListaRepository listaRepository;
+	UsuarioRepository usuarioRepository;
 	
 	@GetMapping({"/",""}) 
-	public List <Lista> index() {
-		return listaRepository.findAll();
+	public List <Usuario> index() {
+		return usuarioRepository.findAll();
 	}
 	
 	//Devuelve pelicula por ID
 	@GetMapping("/id/{id}")
-	public Lista show(@PathVariable("id") int id) { 
-		return listaRepository.findById(id).orElse(null);
+	public Usuario showUsuario(@PathVariable("id") int id) { 
+		return usuarioRepository.findById(id).orElse(null);
 	}
 	
 	//Crear pelicula
 	@PostMapping({"crea"})
 	@ResponseStatus (HttpStatus.CREATED)
-	public Lista creaLista(@RequestBody Lista lista) {  
-		return listaRepository.save(lista);
+	public Usuario creaUsuario(@RequestBody Usuario usuario) {  
+		return usuarioRepository.save(usuario);
 	}
 	
 	/***
@@ -48,8 +49,8 @@ public class ListaController {
 	 * **/
 	@DeleteMapping("borra/{id}")
 	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraLista(@PathVariable("id") int id) {
-		listaRepository.deleteById(id);
+	public void borraUsuario(@PathVariable("id") int id) {
+		usuarioRepository.deleteById(id);
 	}
 	
 	/**
@@ -57,12 +58,14 @@ public class ListaController {
 	 * **/
 	@PutMapping("actualiza/{id}")
 	@ResponseStatus (HttpStatus.CREATED)
-	public Lista actualizaLista(@RequestBody Lista lista, @PathVariable("id") int id) {
-		Lista actuLista = listaRepository.findById(id).orElse(null);
+	public Usuario actualizaUsuario(@RequestBody Usuario usuario, @PathVariable("id") int id) {
+		Usuario actuUsuario = usuarioRepository.findById(id).orElse(null);
 		
-		actuLista.setUsuario(lista.getUsuario());
-		actuLista.setNombre(lista.getNombre());
+		actuUsuario.setEmail(usuario.getEmail());
+		actuUsuario.setPassword(usuario.getPassword());
+		actuUsuario.setNombre(usuario.getNombre());
+		actuUsuario.setToken(usuario.getToken());
 		
-		return listaRepository.save(actuLista);
+		return usuarioRepository.save(actuUsuario);
 	}
 }
