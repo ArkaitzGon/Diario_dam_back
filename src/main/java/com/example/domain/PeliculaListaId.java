@@ -7,27 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class PeliculasUsuarioId implements Serializable{
+public class PeliculaListaId implements Serializable{
 
-	private int usuarioId;
+	private int listaId;
     private int peliculaId;
     
  // Constructor sin parámetros
-    public PeliculasUsuarioId() {}
+    public PeliculaListaId() {}
     
     // Constructor con parámetros
-    public PeliculasUsuarioId(int usuarioId, int peliculaId) {
-        this.usuarioId = usuarioId;
+    public PeliculaListaId(int listaId, int peliculaId) {
+        this.listaId = listaId;
         this.peliculaId = peliculaId;
     }
     
  // Getters y Setters
-    public int getUsuarioId() {
-        return usuarioId;
+    public int getListaId() {
+        return listaId;
     }
 
-    public void setUsuarioId(int usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setListaId(int listaId) {
+        this.listaId = listaId;
     }
 
     public int getPeliculaId() {

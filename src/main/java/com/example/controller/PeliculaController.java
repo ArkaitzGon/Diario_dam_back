@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class PeliculaController {
 	}
 	
 	//Devuelve pelicula por ID
-	@GetMapping("/id/{id}")
+	@GetMapping("id/{id}")
 	public Pelicula show(@PathVariable("id") int id) { 
 		/*
 		Pelicula peli = peliculaRepository.findById(id).orElse(null);
@@ -139,7 +140,33 @@ public class PeliculaController {
 	}*/
 
 
-	
+	//Devuelva una lista con todos los generos diferentes
+	@GetMapping("/generos")
+    public List<String> obtenerGeneros() {
+        // Obtener todas las películas
+        List<Pelicula> peliculas = peliculaRepository.findAll();
+        
+        // Lista para almacenar los géneros
+        List<String> generos = new ArrayList<>();
+        
+        //Recorremos la lista de peliculas para conseguir los generos
+        for (Pelicula pelicula : peliculas) {
+            if (pelicula.getGenero() != null && !pelicula.getGenero().isEmpty()) {
+            	//Dividimos el string por cada coma para conseguir los generos de la pelicula
+                String[] generosArray = pelicula.getGenero().split(",");
+                for (String genero : generosArray) {
+                	//Conseguimos los generos de cada pelicula
+                    String generoTrimmed = genero.trim();
+                    //Añade el genero si no esta ya en la lista
+                    if (!generos.contains(generoTrimmed)) {
+                        generos.add(generoTrimmed);
+                    }
+                }
+            }
+        }
+        
+        return generos;
+    }
 
 
 }

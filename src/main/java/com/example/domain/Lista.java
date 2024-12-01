@@ -1,14 +1,21 @@
 package com.example.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,8 +34,8 @@ public class Lista {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática de ID
     private int id;
-	@Column(name="PELICULAID")
-	private int peliculaId;
+	//@Column(name="USUARIOID")
+	//private int usuarioId;
 	@Column(name="NOMBRE")
 	private String nombre;
 	
@@ -36,11 +43,22 @@ public class Lista {
 	@JsonBackReference // Decimos que la parte MANY es BACKREFERNECE (padre)
 	@ManyToOne // un ciclista tiene un equipo, un equipo varios ciclistas. ESTA ES LA PARTE MANY
 	@JoinColumn (name = "usuarioid") // Se une mediante la columna team_id de la parte ONE
-	private Usuario usuarioid;
+	private Usuario usuario;
 	
 	//Añade propiedad teamName a JSON 
-	@JsonProperty("usuarioID")
+	/*@JsonProperty("usuarioID")
 	public int getUsuarioID() {
-	    return usuarioid != null ? usuarioid.getId() : null;
-		}
+	    return usuario != null ? usuario.getId() : null;
+		}*/
+	
+	// Relación Many-to-Many con la entidad Pelicula
+    @JsonManagedReference
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "PELICULALISTA", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "listaid"), // Columna que hace referencia a Lista
+            inverseJoinColumns = @JoinColumn(name = "peliculaid") // Columna que hace referencia a Pelicula
+    )
+    private List<Pelicula> peliculas = new ArrayList<>();
+	
 }

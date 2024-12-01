@@ -2,11 +2,17 @@ package com.example.domain;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,5 +48,12 @@ public class Pelicula {
     private int anchoImagen;
 	@Column(name = "ALTOIMAGEN")
     private int altoImagen;
+	@Column(name = "ENCARTEL")
+    private String enCartel;
+	
+	// Relación Many-to-Many con la entidad Lista
+    @JsonBackReference
+    @ManyToMany(mappedBy = "peliculas") // Relación gestionada por la clase Lista
+    private List<Lista> listas = new ArrayList<>();
 }
 
