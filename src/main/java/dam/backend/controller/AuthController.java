@@ -69,7 +69,7 @@ public class AuthController {
 	
 	@PostMapping("/logout")
 	public ResponseEntity<?> logoutUser() {
-		ResponseCookie cookie = jwtUtils.getCleanJWtCookie();
+		ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Sesion cerrada correctamente"));
 	}
 }

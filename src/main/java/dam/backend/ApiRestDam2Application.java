@@ -1,4 +1,4 @@
-package dam.backend.demo;
+package dam.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
