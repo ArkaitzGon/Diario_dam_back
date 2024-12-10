@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "dam.app.jwtCookieName",
+    "type": "java.lang.String",
+    "description": "Nombre del cookie en el que se guarda el JWT"
+  },
+  {
+    "name": "dam.app.jwtSecret",
+    "type": "java.lang.String",
+    "description": "Clave para la encriptacion del JWT"
+  },
+  {
+    "name": "dam.app.jwtExpirationMs",
+    "type": "java.lang.String",
+    "description": "Caducidad del JWT"
+  }
+]}
