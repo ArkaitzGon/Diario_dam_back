@@ -46,6 +46,23 @@ public class PeliculaController {
 		return peliculaRepository.findById(id).orElse(null);
 	}
 	
+	
+	//Devuelve todas las peliculas enCartel
+	@GetMapping("encartel")
+	public List <Pelicula> showEnCartel() { 
+		List <Pelicula> peliculas = peliculaRepository.findAll();
+		List <Pelicula> pelisEnCartel = new ArrayList<>();
+		
+		for (Pelicula peli: peliculas) {
+			if(peli.getEnCartel() != null && peli.getEnCartel().equals("true")) {
+				pelisEnCartel.add(peli);
+			}
+		}
+		
+		return pelisEnCartel;
+	}
+	
+	
 	@GetMapping("/buscar/genero_reparto_fecha_titulo")
 	public List<Pelicula> buscarPorGeneroRepartoFechaEstrenoYNombre(
 	        @RequestParam(required = false) String genero,
