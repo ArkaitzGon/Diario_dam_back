@@ -22,7 +22,6 @@ import dam.backend.payload.response.UserInfoResponse;
 import dam.backend.repository.UsuarioRepository;
 import dam.backend.security.jwt.JwtUtils;
 import dam.backend.security.services.UserDetailsImpl;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,21 +40,25 @@ public class AuthController {
 	JwtUtils jwtUtils;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> authenticateUser(/*@Valid*/ @RequestBody LoginRequest loginRequest) {
+		System.out.println(loginRequest.getEmail());
+		System.out.println(loginRequest.getPassword());
 		Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		
 		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 		
-		ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+		//ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(/*userDetails*/loginRequest.getEmail());
 		
-		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-				.body(new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getNombre()));
+		/*return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+				.body(new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getNombre()));*/
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtUtils.generateJwtCookie(userDetails).toString())
+			       .body(new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getNombre()));
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+	public ResponseEntity<?> registerUser(/*@Valid*/ @RequestBody RegisterRequest registerRequest) {
 		if (usuarioRepository.existsByEmail(registerRequest.getEmail())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Ya existe una cuenta con este correo electronico"));
 		}
@@ -69,7 +72,8 @@ public class AuthController {
 	
 	@PostMapping("/logout")
 	public ResponseEntity<?> logoutUser() {
-		ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Sesion cerrada correctamente"));
+		/*ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Sesion cerrada correctamente"));*/
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtUtils.getCleanJwtCookie().toString()).body(new MessageResponse("Sesion cerrada correctamente"));
 	}
 }

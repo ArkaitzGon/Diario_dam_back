@@ -43,15 +43,37 @@ public class JwtUtils {
 		}
 	}
 	
-	public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-		String jwt = generateTokenFromEmail(userPrincipal.getUsername());
-		ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+	//public ResponseCookie generateJwtCookie(/*UserDetailsImpl userPrincipal*/String user) {
+	//	String jwt = generateTokenFromEmail(/*userPrincipal.getUsername()*/user);
+	/*	ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
 		return cookie;
 	}
 
 	public ResponseCookie getCleanJwtCookie() {
 		ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
 		return cookie;
+	}*/
+	public Cookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+	    Cookie jwtTokenCookie = new Cookie(jwtCookie, generateTokenFromEmail(userPrincipal.getUsername()));
+
+	    jwtTokenCookie.setMaxAge(86400);
+	    jwtTokenCookie.setSecure(true);
+	    jwtTokenCookie.setHttpOnly(true);
+	    jwtTokenCookie.setPath("/api/");
+	    //jwtTokenCookie.setDomain("example.com");
+	    return jwtTokenCookie;
+	}
+	
+	public Cookie getCleanJwtCookie() {
+
+	    Cookie jwtTokenCookie = new Cookie(jwtCookie, null);
+
+	    jwtTokenCookie.setMaxAge(86400);
+	    jwtTokenCookie.setSecure(true);
+	    jwtTokenCookie.setHttpOnly(true);
+	    jwtTokenCookie.setPath("/api/");
+	    //jwtTokenCookie.setDomain("example.com");
+	    return jwtTokenCookie;
 	}
 	
 	public String getEmailFromJwtToken (String token) {

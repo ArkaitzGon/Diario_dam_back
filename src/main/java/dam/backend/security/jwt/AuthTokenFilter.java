@@ -34,6 +34,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 				String email = jwtUtils.getEmailFromJwtToken(jwt);
 				
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				System.out.println(userDetails);
 				
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 				
@@ -49,7 +50,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	}
 	
 	private String parseJwt(HttpServletRequest request) {
+		System.out.println("respuesta:" + request);
 		String jwt = jwtUtils.getJwtFromCookies(request);
+		System.out.println("jwt:" + jwt);
 		return jwt;
 	}
 }
