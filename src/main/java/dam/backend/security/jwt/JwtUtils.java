@@ -53,31 +53,7 @@ public class JwtUtils {
 		ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
 		return cookie;
 	}
-	/*
-	public Cookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-	    Cookie jwtTokenCookie = new Cookie(jwtCookie, generateTokenFromEmail(userPrincipal.getUsername()));
 
-	    jwtTokenCookie.setMaxAge(86400);
-	    jwtTokenCookie.setSecure(true);
-	    jwtTokenCookie.setHttpOnly(true);
-	    jwtTokenCookie.setPath("/api/");
-	    //jwtTokenCookie.setDomain("example.com");
-	    return jwtTokenCookie;
-	}
-	*/
-	/*
-	public Cookie getCleanJwtCookie() {
-
-	    Cookie jwtTokenCookie = new Cookie(jwtCookie, null);
-
-	    jwtTokenCookie.setMaxAge(86400);
-	    jwtTokenCookie.setSecure(true);
-	    jwtTokenCookie.setHttpOnly(true);
-	    jwtTokenCookie.setPath("/api/");
-	    //jwtTokenCookie.setDomain("example.com");
-	    return jwtTokenCookie;
-	}
-	*/
 	public String getEmailFromJwtToken (String token) {
 		return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
 	}

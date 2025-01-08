@@ -56,8 +56,7 @@ public class AuthController {
 		
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
 				.body(new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getNombre()));
-		/*return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtUtils.generateJwtCookie(userDetails).toString())
-			       .body(new UserInfoResponse(userDetails.getId(),userDetails.getUsername(),userDetails.getNombre()));*/
+
 	}
 	
 	@PostMapping("/register")
@@ -77,6 +76,6 @@ public class AuthController {
 	public ResponseEntity<?> logoutUser() {
 		ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Sesion cerrada correctamente"));
-		//return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtUtils.getCleanJwtCookie().toString()).body(new MessageResponse("Sesion cerrada correctamente"));
+
 	}
 }
