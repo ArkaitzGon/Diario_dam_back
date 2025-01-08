@@ -41,5 +41,5 @@ public class Cartelera {
     @Column(name="HORARIO")
     private String horario;
     @Column(name="FECHA")
-    private Date fecha;
+    private String fecha;
 }

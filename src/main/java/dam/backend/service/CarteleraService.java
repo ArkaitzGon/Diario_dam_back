@@ -1,25 +1,18 @@
 package dam.backend.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import dam.backend.domain.Cine;
-import dam.backend.domain.Pelicula;
-import dam.backend.dto.CineCartelera;
-import dam.backend.dto.PeliculaCartelera;
-import dam.backend.repository.CineRepository;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
-import dam.backend.repository.PeliculaRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,6 +23,24 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import dam.backend.domain.Cartelera;
+import dam.backend.domain.Cine;
+import dam.backend.domain.Pelicula;
+import dam.backend.dto.CineCartelera;
+import dam.backend.dto.PeliculaCartelera;
+import dam.backend.repository.CarteleraRepository;
+import dam.backend.repository.CineRepository;
+import dam.backend.repository.PeliculaRepository;
+
 @Service
 public class CarteleraService {
     @Autowired
@@ -37,7 +48,54 @@ public class CarteleraService {
 
     @Autowired
     private PeliculaRepository peRepository;
+    
+    @Autowired
+    private CarteleraRepository caRepository;
 
+    
+    public List<CineCartelera> getCartelera(){
+        List<CineCartelera> values = new ArrayList<>();
+        List<Cine> cines = repository.findAll();
+        cines.forEach(cine ->{
+                CineCartelera cineCartelera =  new CineCartelera(
+                        cine.getId(),
+                        cine.getLatitud(),
+                        cine.getLongitud(),
+                        cine.getNombre()
+                );
+                cineCartelera.setPeliculas(this.getPeliculas(cine.getId()));
+                values.add(cineCartelera);
+        });
+        return values;
+    }
+
+    public List<PeliculaCartelera> getPeliculas(int cineId){
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fechaFormateada = fechaActual.format(formato);
+        
+        List<PeliculaCartelera> peliculas = new ArrayList<>();
+        List<Cartelera> cartelera = caRepository.findByCineIdAndFecha(
+                cineId, fechaFormateada
+        );
+        if(!cartelera.isEmpty()){
+            cartelera.forEach(cart ->{
+                Pelicula pelicula = peRepository.findById(cart.getPeliculaId()).orElse(null);
+                if(pelicula != null){
+                    PeliculaCartelera pc = new PeliculaCartelera(
+                            pelicula.getId(),
+                            pelicula.getTitulo(),
+                            pelicula.getImagen(),
+                            pelicula.getAnchoImagen(),
+                            pelicula.getAltoImagen()
+                            );
+                    pc.setHorario(cart.getHorario().split(","));
+                    peliculas.add(pc);
+                }
+            });
+        }
+        return peliculas;
+    }
 
     /**
      * Busca las peliculas
