@@ -34,6 +34,7 @@ public class PeliculaController {
 	 * **/
 	@GetMapping({"/",""}) 
 	public List <Pelicula> index() {
+		System.out.println(peliculaRepository.findAll());
 		return peliculaRepository.findAll();
 	}
 	
