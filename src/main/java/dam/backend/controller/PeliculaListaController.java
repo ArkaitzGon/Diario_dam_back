@@ -68,25 +68,41 @@ public class PeliculaListaController {
 		return new ArrayList<Lista>();
 	}
 	
+	
+	
+	
+	
+	
 	/***
 	 * Borramos una lista
 	 * Le pasamos por parametro el ID
 	 * **/
-	@DeleteMapping("/{listaId}/{peliculaId}")
+	@DeleteMapping("/{usuarioId}/{peliculaId}")
 	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public List<Lista> borraLista(@PathVariable("usuarioId") int listaId, @PathVariable("peliculaId") int peliculaId, Principal principal) {
+	public void borraLista(@PathVariable("usuarioId") int listaId, @PathVariable("peliculaId") int peliculaId, Principal principal) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
-		
+		List<Lista> listaPrueba = new ArrayList<>();
 		if(usuario.isPresent()) {
 			PeliculaListaId id = new PeliculaListaId(listaId, peliculaId);
 			peliculaListaRepository.deleteById(id);
+			System.out.println("registro borrado");
 			
-			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
+			//Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
+			/*
 			if(listas.isPresent()) {
-				return listas.get();
-			}
+				System.out.println("Hola");
+				// Imprimir todas las listas dentro de listas.get()
+	            for (Lista lista : listas.get()) {
+	                System.out.println("Lista ID: " + lista.getId() + ", Nombre: " + lista.getNombre() + "Peliculas: " + lista.getPeliculas().toString());
+	                listaPrueba.add(lista);
+	                
+	            }
+				//return listaPrueba;
+				return "Hola";
+			}*/
 		}
-		return new ArrayList<Lista>();
+		//System.out.println("Adios");
+		//return "Adios";
 	}
 	
 	/***

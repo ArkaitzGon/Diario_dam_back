@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity // declaramos la clase como entidad
-@Table(name="PELICULAUSUARIO")
+@Table(name="PELICULALISTA")
 @IdClass(PeliculaListaId.class)
 public class PeliculaLista {
 

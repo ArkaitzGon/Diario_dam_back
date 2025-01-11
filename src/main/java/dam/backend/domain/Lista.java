@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -40,6 +41,7 @@ public class Lista {
 	
 	// El JSONBAck... es la diferencia de SpringWeb
 	@JsonBackReference // Decimos que la parte MANY es BACKREFERNECE (padre)
+	@JsonIgnore
 	@ManyToOne // un ciclista tiene un equipo, un equipo varios ciclistas. ESTA ES LA PARTE MANY
 	@JoinColumn (name = "usuarioid") // Se une mediante la columna team_id de la parte ONE
 	private Usuario usuario;

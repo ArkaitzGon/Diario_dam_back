@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,6 +53,7 @@ public class Pelicula {
     private String enCartel;
 	
 	// Relación Many-to-Many con la entidad Lista
+	//@JsonIgnore
     @JsonBackReference
     @ManyToMany(mappedBy = "peliculas") // Relación gestionada por la clase Lista
     private List<Lista> listas = new ArrayList<>();
