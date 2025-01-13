@@ -61,5 +61,10 @@ public class Lista {
             inverseJoinColumns = @JoinColumn(name = "peliculaid") // Columna que hace referencia a Pelicula
     )
     private List<Pelicula> peliculas = new ArrayList<>();
+    
+    public Lista(Usuario usuario, String nombre) {
+    	this.nombre = nombre;
+    	this.usuario = usuario;
+    }
 	
 }

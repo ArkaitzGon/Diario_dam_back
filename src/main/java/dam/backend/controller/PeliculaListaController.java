@@ -79,11 +79,11 @@ public class PeliculaListaController {
 	 * **/
 	@DeleteMapping("/{usuarioId}/{peliculaId}")
 	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraLista(@PathVariable("usuarioId") int listaId, @PathVariable("peliculaId") int peliculaId, Principal principal) {
+	public void borraLista(@PathVariable("usuarioId") int usuarioId, @PathVariable("peliculaId") int peliculaId, Principal principal) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 		List<Lista> listaPrueba = new ArrayList<>();
 		if(usuario.isPresent()) {
-			PeliculaListaId id = new PeliculaListaId(listaId, peliculaId);
+			PeliculaListaId id = new PeliculaListaId(usuarioId, peliculaId);
 			peliculaListaRepository.deleteById(id);
 			System.out.println("registro borrado");
 			

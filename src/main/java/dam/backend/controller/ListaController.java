@@ -73,13 +73,37 @@ public class ListaController {
 	 * Crea una lista
 	 * Le pasamos el parametro Principal que trae la informacion del usuario
 	 */
-	@PostMapping("")
+	/*@PostMapping("")
 	@ResponseStatus (HttpStatus.CREATED)
 	public List<Lista> creaLista(@RequestBody Lista lista, Principal principal){
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 		
 		if(usuario.isPresent()) {
 			listaRepository.save(lista);
+			
+			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
+			
+			if(listas.isPresent()) {
+				return listas.get();
+			}
+		}
+		
+		return new ArrayList<Lista>();
+	}*/
+	
+	/*****
+	 * Crea una lista
+	 * Le pasamos el parametro Principal que trae la informacion del usuario
+	 */
+	@PostMapping("")
+	@ResponseStatus (HttpStatus.CREATED)
+	public List<Lista> creaLista(@RequestBody String nombre, Principal principal){
+		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
+		
+		
+		if(usuario.isPresent()) {
+			Lista listaRecibida = new Lista(usuario.get(), nombre);
+			listaRepository.save(listaRecibida);
 			
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
 			
