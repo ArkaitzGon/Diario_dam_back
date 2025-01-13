@@ -43,11 +43,11 @@ public class ListaController {
 	*/
 	//Devuelve pelicula por ID
 	@GetMapping("/{id}")
-	public Lista show(@PathVariable("id") int id) { 
+	public Lista show(@PathVariable("id") int id) {
 		return listaRepository.findById(id).orElse(null);
 	}
-	
-	
+
+
 	//Metodo para devolver las listas de un usuario
 	//Devuelve una lista de listas
 	@GetMapping("")
@@ -57,8 +57,8 @@ public class ListaController {
 		String currentPrincipalName = authentication.getName();
 		System.out.println(currentPrincipalName);*/
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
-		
-		
+
+
 		if(usuario.isPresent()) {
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
 			if(listas.isPresent()) {
@@ -67,30 +67,54 @@ public class ListaController {
 		}
 		return new ArrayList();
 	}
-	
-	
+
+
+	/*****
+	 * Crea una lista
+	 * Le pasamos el parametro Principal que trae la informacion del usuario
+	 */
+	/*@PostMapping("")
+	@ResponseStatus (HttpStatus.CREATED)
+	public List<Lista> creaLista(@RequestBody Lista lista, Principal principal){
+		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
+
+		if(usuario.isPresent()) {
+			listaRepository.save(lista);
+
+			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
+
+			if(listas.isPresent()) {
+				return listas.get();
+			}
+		}
+
+		return new ArrayList<Lista>();
+	}*/
+
 	/*****
 	 * Crea una lista
 	 * Le pasamos el parametro Principal que trae la informacion del usuario
 	 */
 	@PostMapping("")
 	@ResponseStatus (HttpStatus.CREATED)
-	public List<Lista> creaLista(@RequestBody Lista lista, Principal principal){
+	public List<Lista> creaLista(@RequestBody String nombre, Principal principal){
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
-		
+
+
 		if(usuario.isPresent()) {
-			listaRepository.save(lista);
-			
+			Lista listaRecibida = new Lista(usuario.get(), nombre);
+			listaRepository.save(listaRecibida);
+
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
-			
+
 			if(listas.isPresent()) {
 				return listas.get();
 			}
 		}
-		
+
 		return new ArrayList<Lista>();
 	}
-	
+
 	/***
 	 * Borramos una lista
 	 * Le pasamos por parametro el ID y un Principal con informacion del usuario
@@ -99,21 +123,21 @@ public class ListaController {
 	@ResponseStatus (HttpStatus.NO_CONTENT)
 	public List<Lista> borraLista(@PathVariable("id") int id, Principal principal) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
-		
+
 		if (usuario.isPresent()){
 			listaRepository.deleteById(id);
-			
+
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
-			
+
 			if(listas.isPresent()) {
 				return listas.get();
 			}else {
-	            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lista no encontrada o no pertenece al usuario");
-	        }
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lista no encontrada o no pertenece al usuario");
+			}
 		}
 		return new ArrayList<Lista>();
 	}
-	
+
 	/**
 	 * Actualizamos una lista dependiendo de su id
 	 * **/
@@ -121,10 +145,10 @@ public class ListaController {
 	@ResponseStatus (HttpStatus.CREATED)
 	public Lista actualizaLista(@RequestBody Lista lista, @PathVariable("id") int id) {
 		Lista actuLista = listaRepository.findById(id).orElse(null);
-		
+
 		actuLista.setUsuario(lista.getUsuario());
 		actuLista.setNombre(lista.getNombre());
-		
+
 		return listaRepository.save(actuLista);
 	}
 }

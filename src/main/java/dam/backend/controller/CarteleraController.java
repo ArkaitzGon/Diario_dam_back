@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import dam.backend.service.CarteleraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,8 +43,8 @@ public class CarteleraController {
 	PeliculaRepository peliculaRepository;
 	@Autowired
 	CineRepository cineRepository;
-	/*@Autowired
-	CarteleraService carteleraService;*/
+	@Autowired
+	CarteleraService carteleraService;
 	
 	/*
 	@GetMapping({"/",""}) 
@@ -64,52 +66,11 @@ public class CarteleraController {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fechaFormateada = fechaActual.format(formato);
 		
-	    return new CarteleraFecha(fechaFormateada, getCartelera()); 
+	    return new CarteleraFecha(
+			fechaFormateada,
+			carteleraService.getCartelera()
+		);
 	}
-	
-	public List<CineCartelera> getCartelera(){
-        List<CineCartelera> values = new ArrayList<>();
-        List<Cine> cines = cineRepository.findAll();
-        cines.forEach(cine ->{
-                CineCartelera cineCartelera =  new CineCartelera(
-                        cine.getId(),
-                        cine.getLatitud(),
-                        cine.getLongitud(),
-                        cine.getNombre()
-                );
-                cineCartelera.setPeliculas(this.getPeliculas(cine.getId()));
-                values.add(cineCartelera);
-        });
-        return values;
-    }
-
-    public List<PeliculaCartelera> getPeliculas(int cineId){
-        LocalDate fechaActual = LocalDate.now();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fechaFormateada = fechaActual.format(formato);
-        
-        List<PeliculaCartelera> peliculas = new ArrayList<>();
-        List<Cartelera> cartelera = carteleraRepository.findByCineIdAndFecha(
-                cineId, fechaFormateada
-        );
-        if(!cartelera.isEmpty()){
-            cartelera.forEach(cart ->{
-                Pelicula pelicula = peliculaRepository.findById(cart.getPeliculaId()).orElse(null);
-                if(pelicula != null){
-                    PeliculaCartelera pc = new PeliculaCartelera(
-                            pelicula.getId(),
-                            pelicula.getTitulo(),
-                            pelicula.getImagen(),
-                            pelicula.getAnchoImagen(),
-                            pelicula.getAltoImagen()
-                            );
-                    pc.setHorario(cart.getHorario().split(","));
-                    peliculas.add(pc);
-                }
-            });
-        }
-        return peliculas;
-    }
 	
 	/********
 	 * Devuelve un array de peliculas que estan en cartelera

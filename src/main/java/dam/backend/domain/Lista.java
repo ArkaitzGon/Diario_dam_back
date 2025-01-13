@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -31,33 +32,39 @@ import lombok.Setter;
 public class Lista {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática de ID
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática de ID
+	private int id;
 	//@Column(name="USUARIOID")
 	//private int usuarioId;
 	@Column(name="NOMBRE")
 	private String nombre;
-	
+
 	// El JSONBAck... es la diferencia de SpringWeb
 	@JsonBackReference // Decimos que la parte MANY es BACKREFERNECE (padre)
+	@JsonIgnore
 	@ManyToOne // un ciclista tiene un equipo, un equipo varios ciclistas. ESTA ES LA PARTE MANY
 	@JoinColumn (name = "usuarioid") // Se une mediante la columna team_id de la parte ONE
 	private Usuario usuario;
-	
-	//Añade propiedad teamName a JSON 
+
+	//Añade propiedad teamName a JSON
 	/*@JsonProperty("usuarioID")
 	public int getUsuarioID() {
 	    return usuario != null ? usuario.getId() : null;
 		}*/
-	
+
 	// Relación Many-to-Many con la entidad Pelicula
-    @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "PELICULALISTA", // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "listaid"), // Columna que hace referencia a Lista
-            inverseJoinColumns = @JoinColumn(name = "peliculaid") // Columna que hace referencia a Pelicula
-    )
-    private List<Pelicula> peliculas = new ArrayList<>();
-	
+	@JsonManagedReference
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(
+			name = "PELICULALISTA", // Nombre de la tabla intermedia
+			joinColumns = @JoinColumn(name = "listaid"), // Columna que hace referencia a Lista
+			inverseJoinColumns = @JoinColumn(name = "peliculaid") // Columna que hace referencia a Pelicula
+	)
+	private List<Pelicula> peliculas = new ArrayList<>();
+
+	public Lista(Usuario usuario, String nombre) {
+		this.nombre = nombre;
+		this.usuario = usuario;
+	}
+
 }

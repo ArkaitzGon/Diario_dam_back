@@ -4,18 +4,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
+import dam.backend.payload.RouteCoordinates;
+import dam.backend.payload.request.LoginRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import dam.backend.domain.Cine;
 import dam.backend.repository.CineRepository;
 import dam.backend.service.CarteleraService;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:8100, http://localhost:8101")
@@ -30,6 +31,24 @@ public class CineController {
 	@GetMapping({"/",""}) 
 	public List <Cine> index() {
 		return cineRepository.findAll();
+	}
+
+	@PostMapping({"/ubicacion"})
+	public Object getRoute(@Valid @RequestBody RouteCoordinates coordinates){
+		System.out.println(coordinates.getCine().toString());
+		WebClient client = WebClient.create(
+			"https://router.project-osrm.org/route/v1/driving/"+
+			coordinates.getCine() + ";" + coordinates.getPosicion() +
+			"?overview=full&geometries=polyline&steps=true&generate_hints=false"
+		);
+		return  client.get().retrieve().bodyToMono(String.class).block();
+	}
+
+	@GetMapping({"/ubicacion"})
+	public Object getRoute(){
+		WebClient client = WebClient.create(
+				"https://router.project-osrm.org/route/v1/driving/-2.3134208,42.8703744;-2.668882730514457,42.862404304714566?overview=full&geometries=polyline&steps=true&generate_hints=false");
+		return  client.get().retrieve().bodyToMono(String.class).block();
 	}
 	
 	//Devuelve pelicula por ID

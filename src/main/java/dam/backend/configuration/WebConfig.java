@@ -1,7 +1,9 @@
 package dam.backend.configuration;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EntityScan(basePackages = "dam.backend.domain") 
 public class WebConfig implements WebMvcConfigurer {
+    @Value("${dam.app.cors.allowed.origins}")
+    private List<String> allowedOrigins;
 	
 	private static final Long MAX_AGE = 3600L;
     private static final int CORS_FILTER_ORDER = -102;
@@ -26,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:8100");
+        config.setAllowedOrigins(allowedOrigins);
+        //config.addAllowedOrigin("https://router.project-osrm.org");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,

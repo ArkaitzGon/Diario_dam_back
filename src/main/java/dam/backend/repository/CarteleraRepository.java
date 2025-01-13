@@ -11,4 +11,8 @@ import dam.backend.domain.Cartelera;
 public interface CarteleraRepository extends JpaRepository <Cartelera,Integer>{
 
 	List<Cartelera> findByCineIdAndFecha(int cineId, String fecha);
+
+	void deleteByFecha(String fecha);
+
+    List<Cartelera> findByCineId(int cineId);
 }

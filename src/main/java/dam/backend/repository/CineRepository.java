@@ -8,4 +8,5 @@ import dam.backend.domain.Cine;
 @Repository
 public interface CineRepository extends JpaRepository <Cine,Integer>{
     Cine save(Cine cine);
+
 }
