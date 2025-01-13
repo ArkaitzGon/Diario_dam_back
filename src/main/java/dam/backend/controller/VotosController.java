@@ -38,13 +38,60 @@ public class VotosController {
 		return votosRepository.findAll();
 	}
 	
-	//Devuelve pelicula por ID
+	//Devuelve puntuacion media de una pelicula
+	/*@GetMapping("/{id}")
+	public ValoracionDTO show(@PathVariable("id") int id) { 
+		
+		Optional<List<Votos>>listaVotos = votosRepository.findByPeliculaId(id);
+		
+		//Comprobamos si ha sido votada
+		if(listaVotos.get().size() > 0) {
+			int sumatorio = 0;
+			for (Votos votos : listaVotos.get()) {
+				sumatorio += votos.getPuntuacion();
+			}
+			
+			int puntuacionMedia = Math.round(sumatorio / listaVotos.get().size());
+			ValoracionDTO valoracionMedia = new ValoracionDTO(true, puntuacionMedia, id);
+			return valoracionMedia;
+		}else {
+			return new ValoracionDTO(false, -1, id);
+		}
+		
+	}*/
+	
+	/*******
+	 * Comprueba si la pelicula ha sido votada por el usuario
+	 * Y calcula la valoracion media de la pelicula
+	 * @return ValoracionDTO con la media y con true si ya ha sido votada por este usuario
+	 * **/
 	@GetMapping("/{id}")
-	public Votos show(@PathVariable("id") int id) { 
-		return votosRepository.findById(id).orElse(null);
+	public ValoracionDTO show(@PathVariable("id") int id, Principal principal) { 
+		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
+		Optional<List<Votos>>listaVotos = votosRepository.findByPeliculaId(id);
+		
+		boolean votado = false;
+		
+		//Comprobamos si ha sido votada
+		if(listaVotos.get().size() > 0) {
+			int sumatorio = 0;
+			for (Votos votos : listaVotos.get()) {
+				sumatorio += votos.getPuntuacion();
+				if(votos.getUsuarioId() == usuario.get().getId()) {
+					votado = true;
+				}
+			}
+			
+			int puntuacionMedia = Math.round(sumatorio / listaVotos.get().size());
+			ValoracionDTO valoracionMedia = new ValoracionDTO(votado, puntuacionMedia, id);
+			return valoracionMedia;
+		}else {
+			return new ValoracionDTO(votado, -1, id);
+		}
+		
 	}
 	
-	//Crear pelicula
+	//Crear voto
 	@PostMapping({""})
 	@ResponseStatus (HttpStatus.CREATED)
 	public ValoracionDTO creaVotos(@RequestBody ValoracionDTO valoracion, Principal principal) {  
@@ -71,6 +118,7 @@ public class VotosController {
 				
 				valoracion.setVotado(true);
 				valoracion.setPuntuacion(Math.round(sumatorio / listaVotos.get().size()));
+				System.out.println("Valoracion: " + valoracion);
 				return valoracion;
 			}
 			
