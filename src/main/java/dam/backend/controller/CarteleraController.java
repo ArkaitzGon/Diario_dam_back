@@ -1,10 +1,9 @@
 package dam.backend.controller;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import dam.backend.service.CarteleraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,34 +76,29 @@ public class CarteleraController {
 	/********
 	 * Devuelve un array de peliculas que estan en cartelera
 	 * **/
-	@GetMapping("pelisCartel")
+	@GetMapping("/pelisCartel")
 	public List<Pelicula> showPeliculasCartelera(){
-		//Recogemos todas las carteleras para sacar el id de la pelicula
-		List<Cartelera> listaCartelera = carteleraRepository.findAll();
-		
-		//Recogemos los id de las peliculas
-		ArrayList<Integer> listaId = new ArrayList<>();;
-		
-		for (Cartelera cartelera : listaCartelera) {
+		System.out.println("HOLA");
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		List<Cartelera> lista = carteleraRepository.findByFecha(
+				new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime())
+		);
+		ArrayList<Integer> listaId = new ArrayList<>();
+		List<Pelicula> listaPeliculas = new ArrayList<>();
+
+		for (Cartelera cartelera : lista) {
 			//Comprobamos que el id no se encuentra dentro del array
-			if(!listaId.contains(cartelera.getPeliculaId())) {
+			if (!listaId.contains(cartelera.getPeliculaId())) {
 				listaId.add(cartelera.getPeliculaId());
+				listaPeliculas.add(peliculaRepository
+						.findById(cartelera.getPeliculaId())
+						.orElse(new Pelicula())
+				);
 			}
 		}
-		
-		//Creamos y añadimos las peliculas a la lista que devolvemos
-		List<Pelicula> listaPeliculas = new ArrayList<Pelicula>();
-		
-		for (int id : listaId) {
-			Optional<Pelicula> peli = peliculaRepository.findById(id);
-			
-			if(peli.isPresent()) {
-				listaPeliculas.add(peli.get());
-			}
-		}
-		
+		System.out.println("PELIS:"+listaPeliculas.size());
 		return listaPeliculas;
-		
 	}
 	
 	//Crear cartelera

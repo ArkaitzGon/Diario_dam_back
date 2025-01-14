@@ -47,7 +47,7 @@ public class CarteleraService {
                 );
                 cineCartelera.setPeliculas(this.getPeliculas(cine.getId()));
                 values.add(cineCartelera);
-            System.out.println("Nombre::"+cineCartelera.getNombre());
+            //System.out.println("Nombre::"+cineCartelera.getNombre());
 //            if(this.getPeliculas(cine.getId()).size() > 0){
 //                System.out.println("Nombre::"+cineCartelera.getNombre());
 //            }

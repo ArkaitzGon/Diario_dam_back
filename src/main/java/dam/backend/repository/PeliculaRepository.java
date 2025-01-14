@@ -33,4 +33,6 @@ public interface PeliculaRepository extends JpaRepository<Pelicula, Integer>{
 		
 		Optional<List<Pelicula>> findByTituloOrderByFechaEstrenoDesc(String titulo);
 
+	Optional<Pelicula> findByTitulo(String titulo);
+
 }

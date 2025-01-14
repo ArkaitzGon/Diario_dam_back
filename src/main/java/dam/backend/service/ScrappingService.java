@@ -142,13 +142,15 @@ public class ScrappingService {
      * @return
      */
     private Pelicula buscarPelicula(String url, String titulo) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int year = Calendar.getInstance().get(Calendar.YEAR) - 10;
+
         Pelicula pelicula;
-        //Optional<Pelicula> optional = peRepository.findByTituloAndFechaEstreno(titulo,year);
+
         Optional<List<Pelicula>> optional = peRepository.findByTituloOrderByFechaEstrenoDesc(titulo);
         if(optional.isPresent() && optional.get().size() > 0){
-            if(optional.get().get(0).getFechaEstreno() == year)
-                return  optional.get().get(0);
+            //if(String.valueOf(optional.get().get(0).getFechaEstreno()).equals(String.valueOf(year))
+            if(optional.get().get(0).getFechaEstreno() >= year )
+            return  optional.get().get(0);
         }
         else {
             HtmlPage page = scrape(url);
@@ -157,6 +159,7 @@ public class ScrappingService {
             if(pelicula != null){
                 pelicula.setTitulo(titulo);
 
+                pelicula.setResumen(pelicula.getResumen().substring(0, 100));
                 pelicula = peRepository.save(pelicula);
                 if(votos != null){
                     votos.setPeliculaId(pelicula.getId());
@@ -183,6 +186,9 @@ public class ScrappingService {
             if(imgContainer != null){
                 if(!imgContainer.getElementsByTagName("img").isEmpty()){
                     HtmlElement img = imgContainer.getElementsByTagName("img").get(0);
+                    //System.out.println("IMG::"+img.getAttribute("src"));
+                    //System.out.println("IMGH::"+Integer.parseInt(img.getAttribute("height")));
+                    //System.out.println("IMGW::"+Integer.parseInt(img.getAttribute("width")));
                     film.setImagen(img.getAttribute("src"));
                     film.setAltoImagen(Integer.parseInt(
                             img.getAttribute("height")
@@ -191,6 +197,7 @@ public class ScrappingService {
                             img.getAttribute("width")
                     ));
                 }
+
             }
 
             //Año
@@ -201,36 +208,52 @@ public class ScrappingService {
                 String año = ((HtmlElement)info
                         .getFirstByXPath(".//dd[@itemprop='datePublished']"))
                         .getTextContent();
+                //System.out.println("AÑO::"+año);
                 film.setFechaEstreno(Integer.parseInt(año));
                 //Reparto
-                List<HtmlElement> elements = ((HtmlElement) info
-                        .getFirstByXPath(".//dd[@class='card-cast-debug']"))
-                        .getByXPath(".//div[@class='name']");
-                ArrayList<String> reparto = new ArrayList<>();
-                for (HtmlElement element : elements) {
-                    reparto.add(element.getTextContent());
+                HtmlElement element =  info
+                        .getFirstByXPath(".//dd[@class='card-cast-debug']");
+                if(element != null){
+                            List<HtmlElement>elements = element.getByXPath(".//div[@class='name']");
+                    ArrayList<String> reparto = new ArrayList<>();
+                    if(elements != null && !elements.isEmpty()){
+                        for (HtmlElement e : elements) {
+                            //System.out.println("REPARTO::"+e.getTextContent());
+                            reparto.add(e.getTextContent());
+                        }
+
+                        film.setReparto(String.join(", ", reparto));
+                    }
                 }
-                film.setReparto(String.join(", ", reparto));
+
+
 
                 //Genero
-                elements = ((HtmlElement) info
-                    .getFirstByXPath(".//dd[@class='card-genres']"))
-                    .getByXPath(".//a");
-                ArrayList<String> genero = new ArrayList<>();
-                for (HtmlElement element : elements) {
-                    genero.add(element.getTextContent());
-                }
-                film.setGenero(String.join(", ", genero));
+                element =  info
+                        .getFirstByXPath(".//dd[@class='card-genres']");
+                if(element != null){
+                    List<HtmlElement>elements = element.getByXPath(".//a");
+                    ArrayList<String> reparto = new ArrayList<>();
+                    if(elements != null && !elements.isEmpty()){
+                        for (HtmlElement e : elements) {
+                            //System.out.println("genero::"+e.getTextContent());
+                            reparto.add(e.getTextContent());
+                        }
+                    }
+                    film.setGenero(String.join(", ", reparto));
+                    }
 
                 //Resumen
-                HtmlElement element = info
+                element = info
                     .getFirstByXPath(".//dd[@itemprop='description']");
                 if(element != null){
+                    //System.out.println("RESUMEN::"+element.getTextContent());
                 	film.setResumen(element.getTextContent());
                 }
             }
             return film;
         }catch (Exception e) {
+            System.out.println("ERROR::");
             return null;
         }
     }
