@@ -135,7 +135,7 @@ public class VotosController {
 	 * **/
 	@DeleteMapping("/{id}")
 	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraLista(@PathVariable("id") int id) {
+	public void borraVotos(@PathVariable("id") int id) {
 		votosRepository.deleteById(id);
 	}
 	

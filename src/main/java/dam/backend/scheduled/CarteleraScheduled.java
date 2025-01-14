@@ -14,8 +14,8 @@ public class CarteleraScheduled {
     ScrappingService scrappingService;
 
 
-    @Scheduled(cron = "0 0 10 * * *")
-    //@Scheduled(cron = "0 */3 * * * *")
+    //@Scheduled(cron = "0 0 10 * * *")
+    @Scheduled(cron = "0 */3 * * * *")
     public void carteleraScraping(){
         scrappingService.carteleraScrapping();
        carteleraService.deleteCarterleraAyer();

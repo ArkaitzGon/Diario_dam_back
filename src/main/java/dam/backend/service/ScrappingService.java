@@ -86,7 +86,7 @@ public class ScrappingService {
                             cine.getId(),
                             pelicula.getId(),
                             StringUtils.join(horario, ","),
-                            fecha(true)
+                            fecha(true)//Cambiar a false para fecha de hoy, true mañana
                         ));
                     }
                 }
@@ -144,9 +144,11 @@ public class ScrappingService {
     private Pelicula buscarPelicula(String url, String titulo) {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         Pelicula pelicula;
-        Optional<Pelicula> optional = peRepository.findByTituloAndFechaEstreno(titulo,year);
-        if(optional.isPresent()){
-            return  optional.get();
+        //Optional<Pelicula> optional = peRepository.findByTituloAndFechaEstreno(titulo,year);
+        Optional<List<Pelicula>> optional = peRepository.findByTituloOrderByFechaEstrenoDesc(titulo);
+        if(optional.isPresent() && optional.get().size() > 0){
+            if(optional.get().get(0).getFechaEstreno() == year)
+                return  optional.get().get(0);
         }
         else {
             HtmlPage page = scrape(url);
@@ -158,7 +160,8 @@ public class ScrappingService {
                 pelicula = peRepository.save(pelicula);
                 if(votos != null){
                     votos.setPeliculaId(pelicula.getId());
-                    voRepository.save(votos);
+                    
+                    //voRepository.save(votos);
                 }
                 return pelicula;
             }
@@ -223,7 +226,7 @@ public class ScrappingService {
                 HtmlElement element = info
                     .getFirstByXPath(".//dd[@itemprop='description']");
                 if(element != null){
-                    genero.add(element.getTextContent());
+                	film.setResumen(element.getTextContent());
                 }
             }
             return film;

@@ -95,7 +95,7 @@ public class ListaController {
 	 * Crea una lista
 	 * Le pasamos el parametro Principal que trae la informacion del usuario
 	 */
-	@PostMapping("")
+	/*@PostMapping("")
 	@ResponseStatus (HttpStatus.CREATED)
 	public List<Lista> creaLista(@RequestBody String nombre, Principal principal){
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());

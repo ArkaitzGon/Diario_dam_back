@@ -65,6 +65,8 @@ public class CarteleraController {
 		// Formatear a string con el formato YYYY-MM-DD
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fechaFormateada = fechaActual.format(formato);
+        
+        System.out.println(carteleraService.getCartelera().size() + "::" + fechaFormateada);
 		
 	    return new CarteleraFecha(
 			fechaFormateada,
