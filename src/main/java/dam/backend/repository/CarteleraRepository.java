@@ -9,14 +9,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import dam.backend.domain.Cartelera;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface CarteleraRepository extends JpaRepository <Cartelera,Integer>{
 
 	List<Cartelera> findByCineIdAndFecha(int cineId, String fecha);
 
+	@Transactional
 	void deleteByFecha(String fecha);
-
 
 	List<Cartelera> findByFecha(String fecha);
 }

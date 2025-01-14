@@ -38,96 +38,54 @@ public class PeliculaListaController {
 	@Autowired
 	UsuarioRepository usuarioRepository;
 
-	@GetMapping({"/",""})
-	public List <PeliculaLista> index() {
-		return peliculaListaRepository.findAll();
-	}
-
-	//Devuelve pelicula por ID
-	@GetMapping("/id/{listaId}/{peliculaId}")
-	public PeliculaLista show(@PathVariable("usuarioId") int listaId, @PathVariable("peliculaId") int peliculaId) {
-		PeliculaListaId id = new PeliculaListaId(listaId, peliculaId);
-		return peliculaListaRepository.findById(id).orElse(null);
-	}
-
-	//Crear pelicula
-	// Y devuelve una lista de listas del usuario
+	/**
+	 * Agrega una pelicula a una lista
+	 * @param peliculaLista
+	 * @param principal
+	 * @return
+	 */
 	@PostMapping({""})
 	@ResponseStatus (HttpStatus.CREATED)
 	public List<Lista> creaPeliculaLista(@RequestBody PeliculaLista peliculaLista, Principal principal) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 
 		if(usuario.isPresent()) {
-			peliculaListaRepository.save(peliculaLista);
+			if(listaRepository.existsByIdAndUsuario(peliculaLista.getListaId(), usuario.get()))
+				peliculaListaRepository.save(peliculaLista);
 
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
 			if(listas.isPresent()) {
 				return listas.get();
 			}
 		}
-		return new ArrayList<Lista>();
+		return new ArrayList<>();
 	}
 
-
-
-
-
-
-	/***
-	 * Borramos una lista
-	 * Le pasamos por parametro el ID
-	 * **/
-	@DeleteMapping("/{usuarioId}/{peliculaId}")
-	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraLista(@PathVariable("usuarioId") int usuarioId, @PathVariable("peliculaId") int peliculaId, Principal principal) {
+	/**
+	 * Elimina una pelicula de la Lista
+	 * @param listaId
+	 * @param peliculaId
+	 * @param principal
+	 * @return
+	 */
+	@DeleteMapping("/{listaId}/{peliculaId}")
+	public List<Lista> borrarPeliculaLista(
+			@PathVariable("listaId") int listaId,
+			@PathVariable("peliculaId") int peliculaId,
+			Principal principal)
+	{
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 		List<Lista> listaPrueba = new ArrayList<>();
 		if(usuario.isPresent()) {
-			PeliculaListaId id = new PeliculaListaId(usuarioId, peliculaId);
-			peliculaListaRepository.deleteById(id);
-			System.out.println("registro borrado");
+			if(listaRepository.existsByIdAndUsuario(peliculaId, usuario.get()))
+				peliculaListaRepository.deleteByListaIdAndPeliculaId(listaId, peliculaId);
 
-			//Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
-			/*
+			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
+
 			if(listas.isPresent()) {
-				System.out.println("Hola");
-				// Imprimir todas las listas dentro de listas.get()
-	            for (Lista lista : listas.get()) {
-	                System.out.println("Lista ID: " + lista.getId() + ", Nombre: " + lista.getNombre() + "Peliculas: " + lista.getPeliculas().toString());
-	                listaPrueba.add(lista);
-
-	            }
-				//return listaPrueba;
-				return "Hola";
-			}*/
+				return listas.get();
+			}
 		}
-		//System.out.println("Adios");
-		//return "Adios";
-	}
-
-	/***
-	 * Borramos una lista
-	 * Le pasamos por parametro el ID
-	 * **/
-	/*@DeleteMapping("/{listaId}/{peliculaId}")
-	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraLista(@PathVariable("usuarioId") int listaId, @PathVariable("peliculaId") int peliculaId) {
-		PeliculaListaId id = new PeliculaListaId(listaId, peliculaId);
-		peliculaListaRepository.deleteById(id);
-	}*/
-
-	/**
-	 * Actualizamos una lista dependiendo de su id
-	 * **/
-	@PutMapping("/{listaId}/{peliculaId}")
-	@ResponseStatus (HttpStatus.CREATED)
-	public PeliculaLista actualizaLista(@RequestBody PeliculaLista peliculaLista, @PathVariable("listaId") int listaId, @PathVariable("peliculaId") int peliculaId) {
-		PeliculaListaId id = new PeliculaListaId(listaId, peliculaId);
-		PeliculaLista actuPeliLista = peliculaListaRepository.findById(id).orElse(null);
-
-		actuPeliLista.setPeliculaId(peliculaLista.getPeliculaId());
-		actuPeliLista.setListaId(peliculaLista.getListaId());
-
-		return peliculaListaRepository.save(actuPeliLista);
+		return listaPrueba;
 	}
 }

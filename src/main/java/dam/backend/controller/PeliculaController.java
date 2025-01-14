@@ -21,34 +21,39 @@ import dam.backend.domain.Pelicula;
 import dam.backend.repository.PeliculaRepository;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8100, http://localhost:8101")
 @RequestMapping("/api/peliculas")
 public class PeliculaController {
 
 	@Autowired
 	PeliculaRepository peliculaRepository;
-	
+
 	/**
 	 * Devuelve una con todas las peliculas
-	 * Es bastante lento
-	 * **/
+	 * @return
+	 */
 	@GetMapping({"/",""}) 
 	public List <Pelicula> index() {
-		//System.out.println(peliculaRepository.findAll());
 		return peliculaRepository.findAll();
 	}
-	
-	//Devuelve pelicula por ID
+
+	/**
+	 *
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/{id}")
-	public Pelicula show(@PathVariable("id") int id) { 
-		/*
-		Pelicula peli = peliculaRepository.findById(id).orElse(null);
-		return peli
-		*/
-		
+	public Pelicula show(@PathVariable("id") int id) {
 		return peliculaRepository.findById(id).orElse(null);
 	}
-	
+
+	/**
+	 *
+	 * @param genero
+	 * @param reparto
+	 * @param fechaEstreno
+	 * @param titulo
+	 * @return
+	 */
 	@GetMapping("/buscar/genero_reparto_fecha_titulo")
 	public List<Pelicula> buscarPorGeneroRepartoFechaEstrenoYNombre(
 	        @RequestParam(value = "genero", required = false) String genero,
@@ -58,28 +63,34 @@ public class PeliculaController {
 	    // Llama al repositorio con todos los parámetros
 	    return peliculaRepository.findByGeneroRepartoFechaEstrenoYTitulo(genero, reparto, fechaEstreno, titulo);
 	}
-	
-	//Crear pelicula
+
+	/**
+	 * Crear pelicula
+	 * @param peli
+	 * @return
+	 */
 	@PostMapping({""})
 	@ResponseStatus (HttpStatus.CREATED)
 	public Pelicula creaPelicula(@RequestBody Pelicula peli) {  
 		return peliculaRepository.save(peli);
 	}
 
-	
-	/***
+	/**
 	 * Borramos una pelicula
-	 * Le pasamos por parametro el ID
-	 * **/
+	 * @param id
+	 */
 	@DeleteMapping("/{id}")
 	@ResponseStatus (HttpStatus.NO_CONTENT)
 	public void borraPelicula(@PathVariable("id") int id) {
 		peliculaRepository.deleteById(id);
 	}
-	
+
 	/**
 	 * Actualizamos una pelicula dependiendo de su id
-	 * **/
+	 * @param pelicula
+	 * @param id
+	 * @return
+	 */
 	@PutMapping("/{id}")
 	@ResponseStatus (HttpStatus.CREATED)
 	public Pelicula actualizaPelicula(@RequestBody Pelicula pelicula, @PathVariable("id") int id) {
@@ -94,14 +105,13 @@ public class PeliculaController {
 		actuPeli.setAltoImagen(pelicula.getAltoImagen());
 		actuPeli.setAnchoImagen(pelicula.getAnchoImagen());
 
-		
 		return peliculaRepository.save(actuPeli);
 	}
 
-
-
-	//Devuelva una lista con todos los generos diferentes
-	
+	/**
+	 * Devuelva una lista con todos los generos diferentes
+	 * @return
+	 */
 	@GetMapping("/generos")
     public List<String> obtenerGeneros() {
         // Obtener todas las películas
@@ -125,8 +135,6 @@ public class PeliculaController {
                 }
             }
         }
-        
         return generos;
     }
-
 }

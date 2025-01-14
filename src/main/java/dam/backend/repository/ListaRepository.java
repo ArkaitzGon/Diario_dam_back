@@ -13,4 +13,8 @@ import dam.backend.domain.Usuario;
 public interface ListaRepository extends JpaRepository<Lista, Integer>{
 	// Método para encontrar una película por su título
     Optional<List <Lista>> findByUsuario(Usuario usuario);
+
+    Optional<Lista> findByUsuarioAndId(Usuario usuario, int id);
+
+    boolean existsByIdAndUsuario(int id, Usuario usuario);
 }

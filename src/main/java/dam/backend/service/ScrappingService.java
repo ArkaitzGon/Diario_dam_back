@@ -95,6 +95,7 @@ public class ScrappingService {
         driver.quit();
         return true;
     }
+
     /**
      * Dado un elemento Web obtiene los horarios de pelicula
      * @param sessions

@@ -32,7 +32,6 @@ import dam.backend.repository.CineRepository;
 import dam.backend.repository.PeliculaRepository;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8100, http://localhost:8101")
 @RequestMapping("/api/cartelera")
 public class CarteleraController {
 
@@ -41,22 +40,12 @@ public class CarteleraController {
 	@Autowired
 	PeliculaRepository peliculaRepository;
 	@Autowired
-	CineRepository cineRepository;
-	@Autowired
 	CarteleraService carteleraService;
-	
-	/*
-	@GetMapping({"/",""}) 
-	public List <Cartelera> index() {
-		return carteleraRepository.findAll();
-	}
-	*/
-	//Devuelve cartelera por ID
-	@GetMapping("/{id}")
-	public Cartelera showCartelera(@PathVariable("id") int id) { 
-		return  carteleraRepository.findById(id).orElse(null);
-	}
-	
+
+	/**
+	 * Devuelve la cartelera de la fecha actual
+	 * @return
+	 */
 	@GetMapping("")
 	public CarteleraFecha index() {
 		LocalDate fechaActual = LocalDate.now(); // Guarda la fecha actual
@@ -64,21 +53,19 @@ public class CarteleraController {
 		// Formatear a string con el formato YYYY-MM-DD
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String fechaFormateada = fechaActual.format(formato);
-        
-        System.out.println(carteleraService.getCartelera().size() + "::" + fechaFormateada);
-		
+
 	    return new CarteleraFecha(
 			fechaFormateada,
 			carteleraService.getCartelera()
 		);
 	}
-	
-	/********
-	 * Devuelve un array de peliculas que estan en cartelera
-	 * **/
+
+	/**
+	 * Devuelve la lista de peliculas que estan en cartelera
+	 * @return
+	 */
 	@GetMapping("/pelisCartel")
 	public List<Pelicula> showPeliculasCartelera(){
-		System.out.println("HOLA");
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		List<Cartelera> lista = carteleraRepository.findByFecha(
@@ -97,41 +84,7 @@ public class CarteleraController {
 				);
 			}
 		}
-		System.out.println("PELIS:"+listaPeliculas.size());
 		return listaPeliculas;
 	}
 	
-	//Crear cartelera
-	@PostMapping({""})
-	@ResponseStatus (HttpStatus.CREATED)
-	public Cartelera creaCartelera(@RequestBody Cartelera cartelera) {  
-		return carteleraRepository.save(cartelera);
-	}
-	
-	/***
-	 * Borramos una cartelera
-	 * Le pasamos por parametro el ID
-	 * **/
-	@DeleteMapping("/{id}")
-	@ResponseStatus (HttpStatus.NO_CONTENT)
-	public void borraCartelera(@PathVariable("id") int id) {
-		carteleraRepository.deleteById(id);
-	}
-	
-	/**
-	 * Actualizamos una cartelera dependiendo de su id
-	 * **/
-	@PutMapping("/{id}")
-	@ResponseStatus (HttpStatus.CREATED)
-	public Cartelera actualizaCartelera(@RequestBody Cartelera cartelera, @PathVariable("id") int id) {
-		Cartelera actuCartelera = carteleraRepository.findById(id).orElse(null);
-		
-		actuCartelera.setCineId(cartelera.getCineId());
-		actuCartelera.setPeliculaId(cartelera.getPeliculaId());
-		actuCartelera.setHorario(cartelera.getHorario());
-		actuCartelera.setFecha(cartelera.getFecha());
-
-		
-		return carteleraRepository.save(actuCartelera);
-	}
 }
