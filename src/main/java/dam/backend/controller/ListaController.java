@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import dam.backend.repository.PeliculaListaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +31,8 @@ public class ListaController {
 	ListaRepository listaRepository;
 	@Autowired
 	UsuarioRepository usuarioRepository;
+    @Autowired
+    private PeliculaListaRepository peliculaListaRepository;
 
 	/**
 	 * Devuelve las listas de un usuario
@@ -88,9 +91,10 @@ public class ListaController {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 
 		if (usuario.isPresent() ){
-			if(listaRepository.existsByIdAndUsuario(id, usuario.get()));
-			listaRepository.deleteById(id);
-
+			if(listaRepository.existsByIdAndUsuario(id, usuario.get())){
+				peliculaListaRepository.deleteByListaId(id);
+				listaRepository.delete(listaRepository.findById(id).get());
+			}
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
 
 			if(listas.isPresent()) {

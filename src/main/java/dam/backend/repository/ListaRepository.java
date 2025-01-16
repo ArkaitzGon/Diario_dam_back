@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import dam.backend.domain.Lista;
 import dam.backend.domain.Usuario;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ListaRepository extends JpaRepository<Lista, Integer>{
@@ -15,6 +16,6 @@ public interface ListaRepository extends JpaRepository<Lista, Integer>{
     Optional<List <Lista>> findByUsuario(Usuario usuario);
 
     Optional<Lista> findByUsuarioAndId(Usuario usuario, int id);
-
+    @Transactional
     boolean existsByIdAndUsuario(int id, Usuario usuario);
 }
