@@ -43,7 +43,9 @@ public class CineController {
 	 */
 	@PostMapping({"/ubicacion"})
 	public Object getRoute(@Valid @RequestBody RouteCoordinates coordinates){
-		System.out.println(coordinates.getCine().toString());
+		System.out.println("https://router.project-osrm.org/route/v1/driving/"+
+				coordinates.getCine() + ";" + coordinates.getPosicion() +
+				"?overview=full&geometries=polyline&steps=true&generate_hints=false");
 		WebClient client = WebClient.create(
 			"https://router.project-osrm.org/route/v1/driving/"+
 			coordinates.getCine() + ";" + coordinates.getPosicion() +

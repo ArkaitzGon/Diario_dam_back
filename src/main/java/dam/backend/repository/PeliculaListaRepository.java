@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface PeliculaListaRepository extends JpaRepository<PeliculaLista, PeliculaListaId>{
 
     @Transactional
-    void deleteByListaIdAndPeliculaId(int listaId, int peliculaId);
+    void deleteByListaId(int listaId);
 }

@@ -77,8 +77,10 @@ public class PeliculaListaController {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(principal.getName());
 		List<Lista> listaPrueba = new ArrayList<>();
 		if(usuario.isPresent()) {
-			if(listaRepository.existsByIdAndUsuario(peliculaId, usuario.get()))
-				peliculaListaRepository.deleteByListaIdAndPeliculaId(listaId, peliculaId);
+			if(listaRepository.existsByIdAndUsuario(listaId, usuario.get())) {
+				peliculaListaRepository.delete(new PeliculaLista(peliculaId, listaId));
+			}
+
 
 			Optional<List <Lista>> listas = listaRepository.findByUsuario(usuario.get());
 
